@@ -1,0 +1,63 @@
+================================================================
+1. Curvature from sPAM strain:  kappa = eps / d
+================================================================
+  eps = 0.05  ->  kappa = 0.05 / 0.05 = 1.00 1/m   (radius R = 1/kappa = 1.000 m)
+  eps = 0.06  ->  kappa = 0.06 / 0.05 = 1.20 1/m   (radius R = 1/kappa = 0.833 m)
+  eps = 0.08  ->  kappa = 0.08 / 0.05 = 1.60 1/m   (radius R = 1/kappa = 0.625 m)
+
+================================================================
+2. Two-segment piecewise-constant-curvature (PCC) tip positions
+================================================================
+
+C-shape (eps1=eps2=+0.05)
+  Segment 1: kappa1*ell = 1.00*0.35 = 0.3500 rad (20.1 deg)
+     x1 = sin(0.3500)/1.0 = 0.3429 m, y1 = (1-cos(0.3500))/1.0 = 0.0606 m
+  Segment 2 (own frame): theta2 = 0.3500 rad, dx = 0.3429 m, dy = 0.0606 m
+     rotate by theta1: cos = 0.93937, sin = 0.34290
+     X = 0.3429 + 0.93937*0.3429 - 0.34290*0.0606 = 0.6442 m
+     Y = 0.0606 + 0.34290*0.3429 + 0.93937*0.0606 = 0.2352 m
+  Tip heading = 0.7000 rad (40.1 deg)
+
+S-shape (eps1=+0.06, eps2=-0.06)
+  Segment 1: kappa1*ell = 1.20*0.35 = 0.4200 rad (24.1 deg)
+     x1 = sin(0.4200)/1.2 = 0.3398 m, y1 = (1-cos(0.4200))/1.2 = 0.0724 m
+  Segment 2 (own frame): theta2 = -0.4200 rad, dx = 0.3398 m, dy = -0.0724 m
+     rotate by theta1: cos = 0.91309, sin = 0.40776
+     X = 0.3398 + 0.91309*0.3398 - 0.40776*-0.0724 = 0.6796 m
+     Y = 0.0724 + 0.40776*0.3398 + 0.91309*-0.0724 = 0.1449 m
+  Tip heading = 0.0000 rad (0.0 deg)
+
+Tip-only (eps2=+0.08)
+  Segment 1: kappa1*ell = 0.00*0.35 = 0.0000 rad (0.0 deg)
+     straight: x1 = ell = 0.3500 m, y1 = 0
+  Segment 2 (own frame): theta2 = 0.5600 rad, dx = 0.3320 m, dy = 0.0955 m
+     rotate by theta1: cos = 1.00000, sin = 0.00000
+     X = 0.3500 + 1.00000*0.3320 - 0.00000*0.0955 = 0.6820 m
+     Y = 0.0000 + 0.00000*0.3320 + 1.00000*0.0955 = 0.0955 m
+  Tip heading = 0.5600 rad (32.1 deg)
+
+================================================================
+3. Choosing E for PyElastica (it uses a SOLID circular section)
+================================================================
+  I_solid = pi r^4 / 4 = pi*0.025^4/4 = 3.0680e-07 m^4
+  E = EI_eff / I_solid = 0.05/3.0680e-07 = 1.6297e+05 Pa
+  (Wrong way, thin tube t=1 mm: I_tube = pi r^3 t = 4.9087e-08 m^4,
+   E = 1.019e+06 Pa -> PyElastica's actual EI = 0.312 N m^2, 6.25x too stiff)
+
+================================================================
+4. Cantilever tip deflection (B0 test), small-deflection theory
+================================================================
+  delta = F L^3 / (3 EI),  L^3 = 0.343 m^3,  3EI = 0.15 N m^2
+  F = 0.05 N -> delta = 0.05*0.343/0.15 = 114.3 mm   (delta/L = 0.16)
+  F = 0.10 N -> delta = 0.1*0.343/0.15 = 228.7 mm   (delta/L = 0.33)
+  F = 0.20 N -> delta = 0.2*0.343/0.15 = 457.3 mm   (delta/L = 0.65)
+  Rule of thumb: linear theory is good while delta/L < ~0.1.
+
+================================================================
+5. Wall stresses at a sample body pressure (sanity check)
+================================================================
+  p = 7 kPa, r = 0.025 m, t = 0.1 mm
+  hoop  sigma = p r / t     = 1.75 MPa
+  axial sigma = p r / (2 t) = 0.88 MPa
+  wrinkling moment M_w = pi p r^3 / 2 = 171.8 N mm
+  tip force ~ p * pi r^2 = 13.7 N
