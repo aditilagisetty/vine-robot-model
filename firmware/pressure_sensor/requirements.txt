@@ -1,0 +1,14 @@
+# Build requirements (installed automatically by the Raspberry Pi Pico VS Code extension)
+pico-sdk
+arm-none-eabi-gcc
+cmake
+ninja
+picotool
+
+# SDK libraries linked in CMakeLists.txt
+pico_stdlib
+hardware_i2c
+
+# Viewing output (VS Code extensions)
+teleplot
+serial-monitor
