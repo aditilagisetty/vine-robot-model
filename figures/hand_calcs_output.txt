@@ -9,7 +9,7 @@
 2. Two-segment piecewise-constant-curvature (PCC) tip positions
 ================================================================
 
-C-shape (eps1=eps2=+0.05)
+C-shape (same side) (eps1=+0.05, eps2=+0.05)
   Segment 1: kappa1*ell = 1.00*0.35 = 0.3500 rad (20.1 deg)
      x1 = sin(0.3500)/1.0 = 0.3429 m, y1 = (1-cos(0.3500))/1.0 = 0.0606 m
   Segment 2 (own frame): theta2 = 0.3500 rad, dx = 0.3429 m, dy = 0.0606 m
@@ -18,7 +18,7 @@ C-shape (eps1=eps2=+0.05)
      Y = 0.0606 + 0.34290*0.3429 + 0.93937*0.0606 = 0.2352 m
   Tip heading = 0.7000 rad (40.1 deg)
 
-S-shape (eps1=+0.06, eps2=-0.06)
+S-shape (opposite) (eps1=+0.06, eps2=-0.06)
   Segment 1: kappa1*ell = 1.20*0.35 = 0.4200 rad (24.1 deg)
      x1 = sin(0.4200)/1.2 = 0.3398 m, y1 = (1-cos(0.4200))/1.2 = 0.0724 m
   Segment 2 (own frame): theta2 = -0.4200 rad, dx = 0.3398 m, dy = -0.0724 m
@@ -27,7 +27,7 @@ S-shape (eps1=+0.06, eps2=-0.06)
      Y = 0.0724 + 0.40776*0.3398 + 0.91309*-0.0724 = 0.1449 m
   Tip heading = 0.0000 rad (0.0 deg)
 
-Tip-only (eps2=+0.08)
+Tip-only bend (eps1=+0.00, eps2=+0.08)
   Segment 1: kappa1*ell = 0.00*0.35 = 0.0000 rad (0.0 deg)
      straight: x1 = ell = 0.3500 m, y1 = 0
   Segment 2 (own frame): theta2 = 0.5600 rad, dx = 0.3320 m, dy = 0.0955 m

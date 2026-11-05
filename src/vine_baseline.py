@@ -1,6 +1,5 @@
 """
 Vine robot baseline model (P0 / pre-hardware)
-=============================================
 Two-segment planar vine on a table (gravity out of plane, so ignored).
 Each segment is bent by an sPAM, modeled as a rest curvature:
 
@@ -19,18 +18,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import elastica as ea
 from pathlib import Path
+from params import L, d, n_elem, EI_eff, density, SHAPE_CASES, TIP_LOADS
+# Rest curvature doesn't depend on EI in free bending, but contact/loads will.
 
 FIG = Path(__file__).resolve().parent.parent / "figures"
 FIG.mkdir(exist_ok=True)
 
-# ---------------------------------------------------------------- parameters
-L       = 0.70      # total grown length [m]  (B3 fixed-length body ~0.7 m)
-d       = 0.05      # body diameter [m]       (placeholder, set from your tube)
-n_elem  = 70        # elements (1 cm each)
-EI_eff  = 0.05      # effective bending stiffness [N m^2] PLACEHOLDER -> from B0
-# Rest curvature doesn't depend on EI in free bending, but contact/loads will.
-
-# ------------------------------------------------------- analytical PCC model
+# analytical PCC model
 def pcc_shape(kappas, seg_lengths, n=400):
     """Planar piecewise-constant-curvature centerline starting at origin, +x."""
     s_all = np.linspace(0, sum(seg_lengths), n)
@@ -47,7 +41,7 @@ def pcc_shape(kappas, seg_lengths, n=400):
         y[i] = y[i - 1] + np.sin(thm) * ds
     return x, y
 
-# ------------------------------------------------------- PyElastica model
+# PyElastica model
 class VineSim(ea.BaseSystemCollection, ea.Constraints, ea.Damping,
               ea.CallBacks, ea.Forcing):
     pass
@@ -68,7 +62,7 @@ def simulate(eps1, eps2, tip_force=0.0, final_time=20.0, n_elem=n_elem):
         normal=np.array([0.0, 0.0, 1.0]),           # d1 = z -> bends in x-y plane
         base_length=L,
         base_radius=r,
-        density=200.0,
+        density=density,
         youngs_modulus=E,
         shear_modulus=E / 1.5,
     )
@@ -108,12 +102,7 @@ def simulate(eps1, eps2, tip_force=0.0, final_time=20.0, n_elem=n_elem):
     return pos[0].copy(), pos[1].copy(), (kappa1, kappa2)
 
 # ------------------------------------------------------- cases
-cases = {
-    "Straight (no actuation)": (0.00, 0.00),
-    "C-shape (same side)":     (0.05, 0.05),
-    "S-shape (opposite)":      (0.06, -0.06),
-    "Tip-only bend":           (0.00, 0.08),
-}
+cases = SHAPE_CASES
 
 fig, axes = plt.subplots(2, 2, figsize=(11, 8))
 axes = axes.ravel()
@@ -141,7 +130,7 @@ plt.tight_layout()
 plt.savefig(FIG / "vine_shapes.png", dpi=150)
 
 # ------------------------------------------------------- tip load sweep (EI matters)
-loads = [0.0, 0.05, 0.1, 0.2]   # N
+loads = [0.0, *TIP_LOADS]   # N
 fig2, ax2 = plt.subplots(figsize=(6, 4.5))
 defl = []
 for F in loads:

@@ -5,17 +5,15 @@ Every number in docs/hand_calculations.md comes from this script.
 Run:  python src/hand_calcs.py
 """
 import numpy as np
+from params import d, L, EI_eff as EI, EPS_SAMPLES, SHAPE_CASES, TIP_LOADS, p_body, t_wall
 
-d   = 0.05    # body diameter [m]
 r   = d / 2
-L   = 0.70    # total length [m]
 ell = L / 2   # length of each segment [m]
-EI  = 0.05    # effective bending stiffness [N m^2] (placeholder until B0)
 
 print("=" * 64)
 print("1. Curvature from sPAM strain:  kappa = eps / d")
 print("=" * 64)
-for eps in (0.05, 0.06, 0.08):
+for eps in EPS_SAMPLES:
     k = eps / d
     print(f"  eps = {eps:.2f}  ->  kappa = {eps:.2f} / {d} = {k:.2f} 1/m"
           f"   (radius R = 1/kappa = {1/k:.3f} m)")
@@ -56,15 +54,12 @@ print()
 print("=" * 64)
 print("2. Two-segment piecewise-constant-curvature (PCC) tip positions")
 print("=" * 64)
-cases = {
-    "C-shape (eps1=eps2=+0.05)":   (1.0, 1.0),
-    "S-shape (eps1=+0.06, eps2=-0.06)": (1.2, -1.2),
-    "Tip-only (eps2=+0.08)":       (0.0, 1.6),
-}
 hand = {}
-for name, (k1, k2) in cases.items():
-    print(f"\n{name}")
-    hand[name] = two_segment(k1, k2)
+for name, (e1, e2) in SHAPE_CASES.items():
+    if e1 == e2 == 0:
+        continue
+    print(f"\n{name} (eps1={e1:+.2f}, eps2={e2:+.2f})")
+    hand[name] = two_segment(e1 / d, e2 / d)
 
 print()
 print("=" * 64)
@@ -84,7 +79,7 @@ print("=" * 64)
 print("4. Cantilever tip deflection (B0 test), small-deflection theory")
 print("=" * 64)
 print(f"  delta = F L^3 / (3 EI),  L^3 = {L**3:.3f} m^3,  3EI = {3*EI:.2f} N m^2")
-for F in (0.05, 0.10, 0.20):
+for F in TIP_LOADS:
     dl = F * L**3 / (3 * EI)
     print(f"  F = {F:.2f} N -> delta = {F}*{L**3:.3f}/{3*EI:.2f} = {dl*1000:.1f} mm"
           f"   (delta/L = {dl/L:.2f})")
@@ -94,8 +89,7 @@ print()
 print("=" * 64)
 print("5. Wall stresses at a sample body pressure (sanity check)")
 print("=" * 64)
-p = 7e3      # 7 kPa, a typical vine robot body pressure
-tw = 0.1e-3  # 0.1 mm film
+p, tw = p_body, t_wall
 print(f"  p = {p/1e3:.0f} kPa, r = {r} m, t = {tw*1e3} mm")
 print(f"  hoop  sigma = p r / t     = {p*r/tw/1e6:.2f} MPa")
 print(f"  axial sigma = p r / (2 t) = {p*r/(2*tw)/1e6:.2f} MPa")

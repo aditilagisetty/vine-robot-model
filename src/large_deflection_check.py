@@ -2,7 +2,10 @@
 EI*theta'' = -F*cos(theta), theta(0)=0, theta'(L)=0. Independent check of PyElastica."""
 import numpy as np
 from scipy.integrate import solve_bvp, cumulative_trapezoid
-L, EI = 0.70, 0.05
+from params import L, EI_eff as EI, TIP_LOADS
+# PyElastica tip deflections [mm] from figures/results.txt, one per TIP_LOADS entry.
+# Copy them in again after rerunning vine_baseline.py with new parameters.
+PYELASTICA_MM = (109.2, 204.1, 336.8)
 def tip_deflection(F):
     f = lambda s, y: np.vstack([y[1], -F/EI*np.cos(y[0])])
     bc = lambda a, b: np.array([a[0], b[1]])
@@ -11,6 +14,6 @@ def tip_deflection(F):
     th = sol.sol(s)[0]
     return abs(cumulative_trapezoid(np.sin(th), s, initial=0)[-1])  # magnitude
 if __name__ == "__main__":
-    for F, sim in [(0.05, 109.2), (0.10, 204.1), (0.20, 336.8)]:
+    for F, sim in zip(TIP_LOADS, PYELASTICA_MM):
         d = tip_deflection(F)*1000
         print(f"F={F:.2f} N  elastica={d:6.1f} mm  PyElastica={sim:6.1f} mm  diff={abs(sim-d)/d*100:4.1f}%")

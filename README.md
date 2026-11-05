@@ -10,6 +10,7 @@ This repo is the **modeling side** of the project, built before any hardware exi
 
 | Path | What it does |
 |---|---|
+| `src/params.py` | **Every model parameter in one place.** Edit here, then rerun the scripts |
 | `src/vine_baseline.py` | PyElastica (Cosserat rod) model of the vine: C-, S- and tip-only shapes, a tip-load sweep, and a mesh-convergence check |
 | `src/hand_calcs.py` | The analytical models, printed step by step |
 | `src/large_deflection_check.py` | Large-deflection beam solution (SciPy) used to validate PyElastica |
@@ -39,6 +40,8 @@ Each sPAM shortens one side of its segment by a strain ε, which bends the segme
 | Tip load vs. large-deflection beam theory | within 2% |
 
 ## Placeholders to replace with measurements
+
+All of these live in `src/params.py`. After changing them, rerun `vine_baseline.py` and copy its tip-load deflections into `PYELASTICA_MM` in `large_deflection_check.py`.
 
 | Parameter | Current | Replace using |
 |---|---|---|
