@@ -33,3 +33,4 @@ t_wall = 0.1e-3     # film thickness [m]
 
 # ---------------------------------------------------------------- simulation
 n_elem = 70         # PyElastica elements (1 cm each at L = 0.7 m)
+n_regions = 35      # PCC regions per segment (1 cm each, matches n_elem)

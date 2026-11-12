@@ -12,6 +12,7 @@ This repo is the **modeling side** of the project, built before any hardware exi
 |---|---|
 | `src/params.py` | **Every model parameter in one place.** Edit here, then rerun the scripts |
 | `src/vine_baseline.py` | PyElastica (Cosserat rod) model of the vine: C-, S- and tip-only shapes, a tip-load sweep, and a mesh-convergence check |
+| `src/pcc_model.py` | Discretized PCC: each segment split into short constant-curvature regions (step toward per-region curvature from pressure and loads) |
 | `src/hand_calcs.py` | The analytical models, printed step by step |
 | `src/large_deflection_check.py` | Large-deflection beam solution (SciPy) used to validate PyElastica |
 | `src/draw_geometry.py` | Draws the geometry diagram in the docs |
@@ -24,6 +25,7 @@ This repo is the **modeling side** of the project, built before any hardware exi
 pip install -r requirements.txt
 python src/hand_calcs.py               # instant
 python src/large_deflection_check.py   # instant
+python src/pcc_model.py                # instant
 python src/vine_baseline.py            # ~6 min, writes figures/
 ```
 
